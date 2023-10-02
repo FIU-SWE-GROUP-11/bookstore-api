@@ -21,9 +21,8 @@ public class BookService {
         bookRepository.deleteAll();
     }
 
-
-    public List<M_Book> getBooksByGenre(String genre) {
-        // filter books by genre and return list of books of a specific genre
-        return null;
+    // Other mappings for book browsing operations
+    public List<M_Book> findByGenre(String genre) {
+        return bookRepository.findByGenre(genre);
     }
 }
