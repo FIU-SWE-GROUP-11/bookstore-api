@@ -8,11 +8,11 @@ public class M_WishList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "wishListID")
+    @Column(name = "\"wishListID\"")
     private Integer wishListID;
 
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = false)
+    @JoinColumn(name = "\"userID\"", nullable = false)
     private M_User user;
 
     @Column(nullable = false)
