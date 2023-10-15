@@ -16,4 +16,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public void saveUser(M_User newUser) {
+        userRepository.save(newUser);
+    }
+
+    public M_User getUser(String username) {
+        return userRepository.findByUsername(username);
+    }
+
 }
