@@ -13,14 +13,15 @@ public class M_Ratings {
     private Integer ratingsID;
 
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = false)
+    @JoinColumn(name = "\"userID\"", nullable = false)
     private M_User user;
 
+
     @ManyToOne
-    @JoinColumn(name = "bookID", nullable = false)
+    @JoinColumn(name = "\"bookID\"", nullable = false)
     private M_Book book;
 
-    @Column(nullable = false)
+    @Column(name = "\"ratingValue\"", nullable = false)
     private Integer ratingValue;
 
     private Timestamp created_at;
