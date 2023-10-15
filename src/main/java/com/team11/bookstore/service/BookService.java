@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.team11.bookstore.repository.BookRepository;
 import com.team11.bookstore.model.M_Book;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,5 +25,11 @@ public class BookService {
     // Other mappings for book browsing operations
     public List<M_Book> findByGenre(String genre) {
         return bookRepository.findByGenre(genre);
+    }
+
+    public List<M_Book> findByCopiesSold (Integer copiesSold) {
+        List<M_Book> allBooks = bookRepository.findAll();
+        allBooks.sort(Comparator.comparing(M_Book::getCopiesSold).reversed());
+        return allBooks.subList(0, 10);
     }
 }

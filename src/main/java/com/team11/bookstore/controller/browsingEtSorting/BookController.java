@@ -27,5 +27,10 @@ public class BookController {
         return bookService.findByGenre(genre);
     }
 
+    @GetMapping("/top-sellers")
+    public List<M_Book> findByCopiesSold(Integer copiesSold) {
+        return bookService.findByCopiesSold(copiesSold);
+    }
+
     // Other mappings for book browsing operations
 }

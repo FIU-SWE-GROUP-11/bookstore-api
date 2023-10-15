@@ -9,4 +9,5 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<M_Book, Integer> {
     // Custom query methods
     List<M_Book> findByGenre(String genre);
+    List<M_Book> findByCopiesSold(Integer copiesSold);
 }
