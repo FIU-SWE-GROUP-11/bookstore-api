@@ -16,6 +16,7 @@ public class M_User {
     private String username;
     private String email;
     private String password;
+    @Column(name = "\"homeAddress\"")
     private String homeAddress;
     private LocalDateTime created_at;
 
@@ -30,6 +31,16 @@ public class M_User {
         this.password = password;
         this.homeAddress = homeAddress;
         this.created_at = createdAt;
+    }
+
+    public M_User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        created_at = LocalDateTime.now();
     }
 
     public Integer getId() {
