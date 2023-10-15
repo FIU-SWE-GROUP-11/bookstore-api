@@ -16,6 +16,7 @@ public class M_User {
     private String username;
     private String email;
     private String password;
+    @Column(name = "\"homeAddress\"")
     private String homeAddress;
     private LocalDateTime created_at;
 
