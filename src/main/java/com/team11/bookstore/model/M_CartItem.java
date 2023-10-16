@@ -6,14 +6,14 @@ import jakarta.persistence.*;
 public class M_CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartItemsID", nullable = false)
+    @Column(name = "\"cartItemsID\"", nullable = false)
     private Integer cartItemsID;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cartID", nullable = false)
+    @JoinColumn(name = "\"cartID\"", nullable = false)
     private M_ShoppingCart shoppingCart;
 
-    @Column(name = "bookID", nullable = false)
+    @Column(name = "\"bookID\"", nullable = false)
     private Integer bookID;
 
     public M_CartItem() {}
@@ -22,6 +22,7 @@ public class M_CartItem {
         this.shoppingCart = shoppingCart;
         this.bookID = bookID;
     }
+
 
     public Integer getCartItemsID() {
         return cartItemsID;
