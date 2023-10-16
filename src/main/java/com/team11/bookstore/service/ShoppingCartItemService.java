@@ -13,8 +13,16 @@ public class ShoppingCartItemService {
     private CartItemRepository cartItemRepo;
 
     public M_CartItem createCartItem(M_ShoppingCart shoppingCart, int bookID){
-        M_CartItem cartItem = new M_CartItem(shoppingCart, bookID);
+        if(!cartItemRepo.existsByShoppingCart_CartIDAndBookID(shoppingCart.getCartID(), bookID)){
+            M_CartItem cartItem = new M_CartItem(shoppingCart, bookID);
 
-        return cartItemRepo.save(cartItem);
+            shoppingCart.getCartItems().add(cartItem);
+
+            return cartItemRepo.save(cartItem);
+        }
+
+        return new M_CartItem();
     }
+
+
 }
