@@ -3,6 +3,7 @@ package com.team11.bookstore.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,10 +18,11 @@ public class M_ShoppingCart {
     @Column(name = "\"userID\"", nullable = false)
     private Integer userID;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<M_CartItem> cartItems;
+    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<M_CartItem> cartItems = new HashSet<>();;
 
     public M_ShoppingCart() {
+
     }
 
     public M_ShoppingCart(Integer cartID, Integer userID, Set<M_CartItem> cartItems) {

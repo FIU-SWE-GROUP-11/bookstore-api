@@ -13,7 +13,8 @@ public class ShoppingCartItemService {
     private CartItemRepository cartItemRepo;
 
     public M_CartItem createCartItem(M_ShoppingCart shoppingCart, int bookID){
-        if(!cartItemRepo.existsByShoppingCart_CartIDAndBookID(shoppingCart.getCartID(), bookID)){
+        if (!cartItemRepo.existsByShoppingCart_CartIDAndBookID(shoppingCart.getCartID(), bookID)) {
+            System.out.println("Shopping Cart ID from repo: " + shoppingCart.getCartID());
             M_CartItem cartItem = new M_CartItem(shoppingCart, bookID);
 
             shoppingCart.getCartItems().add(cartItem);

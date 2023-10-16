@@ -105,6 +105,8 @@ public class ShoppingCartController {
                 return ResponseEntity.badRequest().body("Book does not exist.");
             }
 
+            System.out.println(e.toString());
+
             return ResponseEntity.badRequest().body("Something went wrong");
         }
 
