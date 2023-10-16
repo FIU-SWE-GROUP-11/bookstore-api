@@ -11,13 +11,13 @@ public class M_ShoppingCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cartID", nullable = false)
+    @Column(name = "\"cartID\"", nullable = false)
     private Integer cartID;
 
-    @Column(name = "userID", nullable = false)
+    @Column(name = "\"userID\"", nullable = false)
     private Integer userID;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "\"shoppingCart\"", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<M_CartItem> cartItems;
 
     public M_ShoppingCart() {
