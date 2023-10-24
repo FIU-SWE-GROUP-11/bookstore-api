@@ -41,8 +41,15 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public M_User getUserByUsername(@PathVariable String username) {
-        return userService.getUser(username);
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        M_User user = userService.getUser(username);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        else {
+            String errorMessage = "User " + username + " does not exist.";
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
     }
 }
 
