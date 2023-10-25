@@ -1,8 +1,7 @@
 package com.team11.bookstore.controller.profile;
 
-import com.team11.bookstore.model.M_Book;
+import com.team11.bookstore.model.M_CreditCard;
 import com.team11.bookstore.model.M_User;
-import com.team11.bookstore.service.BookService;
 import com.team11.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,23 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
         else {
-            String errorMessage = "User " + username + " does not exist.";
+            String errorMessage = "User \"" + username + "\" does not exist.";
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "/{username}/add-credit-card", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> addCreditCard(@PathVariable String username, @RequestBody M_CreditCard newCard) {
+        M_User user = userService.getUser(username);
+        if (user != null) {
+            newCard.setUser(user);
+            userService.saveCreditCard(newCard);
+            String successMessage = "Successfully added credit card for \"" + username + "\".";
+            return new ResponseEntity<>(successMessage, HttpStatus.CREATED);
+        }
+        else {
+            String errorMessage = "User \"" + username + "\" does not exist.";
             return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
         }
     }
