@@ -13,11 +13,15 @@ public class M_CreditCard {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = false)
+    @JoinColumn(name = "\"userID\"", nullable = false)
     private M_User user;
+    @Column(name = "\"cardNumber\"")
     private Long cardNumber;
+    @Column(name = "\"expirationDate\"")
     private Date expirationDate;
+    @Column(name = "\"CVV\"")
     private Integer cvv;
+    @Column(name = "\"cardName\"")
     private String cardName;
 
     public M_CreditCard(){}
@@ -25,6 +29,13 @@ public class M_CreditCard {
     public M_CreditCard(Integer id, M_User user, Long cardNumber, Date expirationDate, Integer cvv, String cardName) {
         this.id = id;
         this.user = user;
+        this.cardNumber = cardNumber;
+        this.expirationDate = expirationDate;
+        this.cvv = cvv;
+        this.cardName = cardName;
+    }
+    public M_CreditCard(Integer id, Long cardNumber, Date expirationDate, Integer cvv, String cardName) {
+        this.id = id;
         this.cardNumber = cardNumber;
         this.expirationDate = expirationDate;
         this.cvv = cvv;
