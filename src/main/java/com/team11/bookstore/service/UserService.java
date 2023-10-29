@@ -15,6 +15,9 @@ public class UserService {
     public List<M_User> getAllUsers() {
         return userRepository.findAll();
     }
+    public boolean userExists(Integer userId) {
+        return userRepository.existsById(userId);
+    }
 
     public void saveUser(M_User newUser) {
         userRepository.save(newUser);

@@ -32,4 +32,7 @@ public class BookService {
         allBooks.sort(Comparator.comparing(M_Book::getCopiesSold).reversed());
         return allBooks.subList(0, 10);
     }
+    public boolean bookExists(Integer bookId) {
+        return bookRepository.existsById(bookId);
+    }
 }
