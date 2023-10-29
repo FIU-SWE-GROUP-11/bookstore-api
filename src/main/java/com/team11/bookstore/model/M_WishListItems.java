@@ -8,15 +8,15 @@ public class M_WishListItems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "wishListItemsID")
+    @Column(name = "\"wishListItemsID\"")
     private Integer wishListItemsID;
 
     @ManyToOne
-    @JoinColumn(name = "wishListID", nullable = false)
+    @JoinColumn(name = "\"wishListID\"", nullable = false)
     private M_WishList wishList;
 
     @ManyToOne
-    @JoinColumn(name = "bookID", nullable = false)
+    @JoinColumn(name = "\"bookID\"", nullable = false)
     private M_Book book;
 
     public M_WishListItems() {}

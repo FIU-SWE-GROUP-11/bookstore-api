@@ -18,4 +18,16 @@ public class WishlistController {
         return wishListService.createWishlist(userId, wishlistName);
     }
 
+    @PostMapping("/add-book")
+    public void addBookToWishlist(@RequestParam Integer bookId, @RequestParam Integer wishlistId) {
+        wishListService.addBookToWishlist(bookId, wishlistId);
+    }
+
+    @DeleteMapping("/remove-book")
+    public void removeBookFromWishlist(@RequestParam Integer bookId, @RequestParam Integer wishlistId){
+        wishListService.removeBookFromWishlist(bookId, wishlistId);
+    }
+
+
+
 }
