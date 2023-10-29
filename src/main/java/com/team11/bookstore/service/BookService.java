@@ -26,4 +26,7 @@ public class BookService {
         // filter books by genre and return list of books of a specific genre
         return null;
     }
+    public boolean bookExists(Integer bookId) {
+        return bookRepository.existsById(bookId);
+    }
 }

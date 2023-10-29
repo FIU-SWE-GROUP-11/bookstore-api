@@ -9,18 +9,18 @@ public class M_Comments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "commentID")
+    @Column(name = "\"commentID\"")
     private Integer commentID;
 
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = false)
+    @JoinColumn(name = "\"userID\"", nullable = false)
     private M_User user;
 
     @ManyToOne
-    @JoinColumn(name = "bookID", nullable = false)
+    @JoinColumn(name = "\"bookID\"", nullable = false)
     private M_Book book;
 
-    @Column(nullable = false)
+    @Column(name = "\"commentDescription\"", nullable = false)
     private String commentDescription;
 
     private Timestamp created_at;
