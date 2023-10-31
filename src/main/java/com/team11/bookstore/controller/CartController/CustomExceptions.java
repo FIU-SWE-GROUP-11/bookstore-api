@@ -12,5 +12,11 @@ public class CustomExceptions{
         }
     }
 
+    public static class UnableToProcessOneOrMoreBooksException extends Exception{
+        public UnableToProcessOneOrMoreBooksException(String message) {
+            super(message);
+        }
+    }
+
 
 }
