@@ -1,4 +1,4 @@
-package com.team11.bookstore.controller.CartController;
+package com.team11.bookstore.customExceptions;
 
 public class CustomExceptions{
     public static class InvalidBookIDException extends Exception{
@@ -14,6 +14,18 @@ public class CustomExceptions{
 
     public static class UnableToProcessOneOrMoreBooksException extends Exception{
         public UnableToProcessOneOrMoreBooksException(String message) {
+            super(message);
+        }
+    }
+
+    public static class EmptyCartException extends Exception{
+        public EmptyCartException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UserDoesNotExistException extends Exception{
+        public UserDoesNotExistException(String message) {
             super(message);
         }
     }
