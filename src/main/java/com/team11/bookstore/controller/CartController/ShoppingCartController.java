@@ -1,9 +1,12 @@
 package com.team11.bookstore.controller.CartController;
 
+import com.team11.bookstore.customExceptions.CustomExceptions;
 import com.team11.bookstore.model.M_Book;
 import com.team11.bookstore.model.M_CartItem;
 import com.team11.bookstore.model.M_ShoppingCart;
+import com.team11.bookstore.model.M_User;
 import com.team11.bookstore.repository.BookRepository;
+import com.team11.bookstore.repository.UserRepository;
 import com.team11.bookstore.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,7 +24,10 @@ public class ShoppingCartController {
     private ShoppingCartService cartService;
 
     @Autowired
-    private BookRepository bookRepo;
+    private UserRepository userRepo;
+
+    @Autowired
+    private BookRepository bookRepo; // TODO pending bookService update >> replace with BookService when update is complete
 
     static class ShpCartBookObjectNotation {
         private Integer id;
@@ -67,13 +73,25 @@ public class ShoppingCartController {
 
         List<ShpCartBookObjectNotation> result = new ArrayList<ShpCartBookObjectNotation>();
 
+
         try {
+            Optional<M_User> user = userRepo.findById(uid);
+
+            if(user.isEmpty()){
+                throw new CustomExceptions.UserDoesNotExistException("Invalid user provided");
+            }
+
+
            cartItems  = cartService.getAllCartItemsByUserId(uid);
+
+            if (cartItems == null || cartItems.isEmpty()) {
+                throw new CustomExceptions.EmptyCartException("The cart for the provided user id is empty.");
+            }
 
             System.out.println(cartItems.size());
 
            for (M_CartItem item : cartItems ){
-               Optional<M_Book> book = bookRepo.findById(item.getBookID());
+               Optional<M_Book> book = bookRepo.findById(item.getBookID());  // TODO pending bookService update
 
                if(book.isPresent()){
 
@@ -92,9 +110,12 @@ public class ShoppingCartController {
 
            }
 
-        }catch(Exception e){
-            // TODO perform more validations and return more specific errors >> e.g. is the user id valid? Is the cart empty? Does the user even have a cart?
-            System.out.println(e.getClass().getName());
+        }catch(CustomExceptions.UnableToProcessOneOrMoreBooksException e){ // TODO perform more validations and return more specific errors >> e.g. is the user id valid? Is the cart empty? Does the user even have a cart?
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(CustomExceptions.UserDoesNotExistException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch(Exception e){
+
             return ResponseEntity.badRequest().body("Something went wrong... We couldn't find any cart items in your shopping cart.");
         }
 
@@ -126,6 +147,60 @@ public class ShoppingCartController {
             this.bookID = bookID;
         }
     }
+
+    @GetMapping("/subtotal")
+    public ResponseEntity<?> getCartSubtotal(@RequestParam int uid){
+        Set<M_CartItem> cartItems;
+
+        BigDecimal subtotal = new BigDecimal(0);
+
+
+        try {
+            Optional<M_User> user = userRepo.findById(uid);
+
+            if(user.isEmpty()){
+                throw new CustomExceptions.UserDoesNotExistException("Invalid user provided");
+            }
+
+
+            cartItems  = cartService.getAllCartItemsByUserId(uid);
+
+            if (cartItems == null || cartItems.isEmpty()) {
+                throw new CustomExceptions.EmptyCartException("The cart for the provided user id is empty.");
+            }
+
+
+            for (M_CartItem item : cartItems ){
+                Optional<M_Book> book = bookRepo.findById(item.getBookID());  // TODO pending bookService update
+
+                if(book.isPresent()){
+
+                    M_Book actualBook = book.get();
+
+                    BigDecimal price = actualBook.getPrice();
+
+                    subtotal = subtotal.add(price);
+                }else{
+                    throw new CustomExceptions.UnableToProcessOneOrMoreBooksException("Something went wrong while retrieving the book details. Data may be corrupted");
+                }
+
+            }
+
+        }catch(CustomExceptions.UnableToProcessOneOrMoreBooksException e){ // TODO perform more validations and return more specific errors >> e.g. is the user id valid? Is the cart empty? Does the user even have a cart?
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(CustomExceptions.UserDoesNotExistException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(CustomExceptions.EmptyCartException e){
+            return ResponseEntity.ok(0.00);
+        }
+        catch(Exception e){
+
+            return ResponseEntity.badRequest().body("Something went wrong... We couldn't find any cart items in your shopping cart.");
+        }
+
+        return ResponseEntity.ok("{\"subtotal\" : "+subtotal + "}");
+    }
+
 
     @PostMapping("/add")
     public ResponseEntity<?> addBookToCart(@RequestBody RequestCartItem cartItem){
