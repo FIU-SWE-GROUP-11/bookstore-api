@@ -1,6 +1,5 @@
 package com.team11.bookstore.service;
 
-import com.team11.bookstore.controller.CartController.CustomExceptions;
 import com.team11.bookstore.model.M_CartItem;
 import com.team11.bookstore.model.M_ShoppingCart;
 import com.team11.bookstore.repository.ShoppingCartRepository;
@@ -9,8 +8,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 @Service
