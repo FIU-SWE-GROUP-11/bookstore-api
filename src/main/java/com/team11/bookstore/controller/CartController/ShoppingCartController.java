@@ -1,17 +1,17 @@
 package com.team11.bookstore.controller.CartController;
 
+import com.team11.bookstore.model.M_Book;
 import com.team11.bookstore.model.M_CartItem;
 import com.team11.bookstore.model.M_ShoppingCart;
+import com.team11.bookstore.repository.BookRepository;
 import com.team11.bookstore.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 @RestController
 @RequestMapping("/cart")
@@ -20,28 +20,85 @@ public class ShoppingCartController {
     @Autowired
     private ShoppingCartService cartService;
 
+    @Autowired
+    private BookRepository bookRepo;
+
+    static class ShpCartBookObjectNotation {
+        private Integer id;
+        private String title;
+        private BigDecimal price;
+
+        public ShpCartBookObjectNotation(Integer id, String title, BigDecimal price) {
+            this.id = id;
+            this.title = title;
+            this.price = price;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
+
+    }
 
     @GetMapping
     public ResponseEntity<?> getAllCartItems(@RequestParam int uid){
         Set<M_CartItem> cartItems;
 
-        // TODO once book service expands, use it to get the book names and add the book names to result list instead of ID
-        List<Integer> result = new ArrayList<Integer>();
+        List<ShpCartBookObjectNotation> result = new ArrayList<ShpCartBookObjectNotation>();
 
         try {
            cartItems  = cartService.getAllCartItemsByUserId(uid);
 
+            System.out.println(cartItems.size());
+
            for (M_CartItem item : cartItems ){
-               result.add(item.getBookID());
+               Optional<M_Book> book = bookRepo.findById(item.getBookID());
+
+               if(book.isPresent()){
+
+                   M_Book actualBook = book.get();
+
+                   Integer id = actualBook.getBookID();
+                   String title = actualBook.getBookName();
+                   BigDecimal price = actualBook.getPrice();
+
+                   ShpCartBookObjectNotation newBook = new ShpCartBookObjectNotation(id, title, price);
+
+                   result.add(newBook);
+               }else{
+                   throw new CustomExceptions.UnableToProcessOneOrMoreBooksException("Something went wrong while retrieving the book details. Data may be corrupted");
+               }
+
            }
 
         }catch(Exception e){
             // TODO perform more validations and return more specific errors >> e.g. is the user id valid? Is the cart empty? Does the user even have a cart?
-
+            System.out.println(e.getClass().getName());
             return ResponseEntity.badRequest().body("Something went wrong... We couldn't find any cart items in your shopping cart.");
         }
 
-        return ResponseEntity.ok(result.toString());
+        return ResponseEntity.ok(result);
     }
 
     public static class RequestCartItem{
