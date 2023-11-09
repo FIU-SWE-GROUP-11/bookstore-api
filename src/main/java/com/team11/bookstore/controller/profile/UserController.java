@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -57,6 +58,39 @@ public class UserController {
         }
         String errorMessage = "User \"" + username + "\" does not exist.";
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping(path = "/update/{username}")
+    public ResponseEntity<String> updateUserInfo(@PathVariable String username, @RequestBody Map<String, String> updatedFields) {
+        if (!userService.userExistsByUsername(username, false)) {
+            String errorMessage = "User \"" + username + "\" does not exist.";
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+        if (updatedFields.containsKey("email")){
+            return new ResponseEntity<>("Cannot change email address.", HttpStatus.BAD_REQUEST);
+        }
+        M_User updatedUser = userService.getUser(username, false);
+        if (updatedFields.containsKey("name")){
+            updatedUser.setName(updatedFields.get("name"));
+        }
+        if (updatedFields.containsKey("password")){
+            updatedUser.setPassword(updatedFields.get("password"));
+        }
+        if (updatedFields.containsKey("homeAddress")){
+            updatedUser.setHomeAddress(updatedFields.get("homeAddress"));
+        }
+        if (updatedFields.containsKey("username")){
+            String newUsername = updatedFields.get("username");
+            if (!username.equalsIgnoreCase(newUsername) && userService.userExistsByUsername(newUsername, false)) {
+                String errorMessage = "Username \"" + newUsername + "\" is taken.";
+                return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+            }
+            updatedUser.setUsername(newUsername);
+            username = newUsername;
+        }
+        userService.saveUser(updatedUser);
+        String successMessage = "Successfully updated account information for \"" + userService.getUser(username, false).getUsername() + "\".";
+        return new ResponseEntity<>(successMessage, HttpStatus.OK);
     }
 }
 
