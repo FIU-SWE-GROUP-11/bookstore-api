@@ -51,6 +51,9 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addCreditCard(@PathVariable String username, @RequestBody M_CreditCard newCard) {
         if (userService.userExistsByUsername(username, false)) {
+            if (newCard.getCardName() == null || newCard.getCardNumber() == null || newCard.getCvv() == null || newCard.getExpirationDate() == null) {
+                return new ResponseEntity<>("Cardholder name, card number, CVV, and expiration date are required.", HttpStatus.BAD_REQUEST);
+            }
             newCard.setUser(userService.getUser(username, false));
             userService.saveCreditCard(newCard);
             String successMessage = "Successfully added credit card for \"" + userService.getUser(username, false).getUsername() + "\".";
