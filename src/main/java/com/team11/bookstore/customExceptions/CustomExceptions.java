@@ -30,5 +30,28 @@ public class CustomExceptions{
         }
     }
 
+    public static class MissingCreditCardFieldsException extends Exception{
+        public MissingCreditCardFieldsException(String message) {
+            super(message);
+        }
+    }
+
+    public static class UsernameAlreadyExistsException extends Exception{
+        public UsernameAlreadyExistsException(String message) {
+            super(message);
+        }
+    }
+
+    public static class CannotChangeEmailException extends Exception{
+        public CannotChangeEmailException(String message) {
+            super(message);
+        }
+    }
+
+    public static class MissingSignUpFieldsException extends Exception{
+        public MissingSignUpFieldsException(String message) {
+            super(message);
+        }
+    }
 
 }
