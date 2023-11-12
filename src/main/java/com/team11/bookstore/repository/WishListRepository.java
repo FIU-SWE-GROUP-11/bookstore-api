@@ -2,6 +2,7 @@ package com.team11.bookstore.repository;
 
 import com.team11.bookstore.model.M_User;
 import com.team11.bookstore.model.M_WishList;
+import com.team11.bookstore.model.M_WishListItems;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
