@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -37,10 +38,8 @@ public class WishlistService {
 
         //check if the user already has three wishlists.
         if (wishListRepository.countByUser(user) >= 3) {
-            throw new IllegalArgumentException("User has reached the maximum amount of users");
-        }
-        //checks if wishlist name was already used on a wishlist for that user.
-        if (wishListRepository.existsByUserAndName(user, wishlistName)) {
+            throw new IllegalArgumentException("User has reached the maximum amount of wishlists, which is 3");
+        }else if (wishListRepository.existsByUserAndName(user, wishlistName)) {
             throw new IllegalArgumentException("Wishlist name already exists for this user");
         }
 
@@ -79,4 +78,15 @@ public class WishlistService {
 
         wishListItemsRepository.delete(wishListItem);
     }
+
+    public List<M_Book> getAllBooksInWishList(Integer wishlistId){
+        List<M_WishListItems> wishlistItems = wishListItemsRepository.findByWishList_WishListID(wishlistId);
+
+        if (wishlistItems == null || wishlistItems.isEmpty()){
+            throw new EntityNotFoundException("Wishlist not found");
+        }
+
+        return wishlistItems.stream().map(M_WishListItems::getBook).toList();
+    }
+
 }
