@@ -14,4 +14,7 @@ public class RatingService {
     public M_Ratings createRating(M_Ratings rating) {
         return ratingsRepository.save(rating);
     }
+    public Double getAverageRatingByBookId(Integer bookId) {
+        return ratingsRepository.calculateAverageRating(bookId);
+    }
 }

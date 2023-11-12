@@ -15,7 +15,6 @@ import java.util.List;
 @Service
 public class BookService {
 
-    // MUST have - replace repository name with pertinent one
     @Autowired
     private BookRepository bookRepository;
 
