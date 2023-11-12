@@ -5,10 +5,7 @@ import com.team11.bookstore.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -34,5 +31,15 @@ public class RatingController {
         ratingService.createRating(rating);
 
         return new ResponseEntity<>("Rating created successfully.", HttpStatus.OK);
+    }
+    @GetMapping("/{bookId}")
+    public ResponseEntity<?> getBookAverageRating(@PathVariable Integer bookId) {
+        Double averageRating = ratingService.getAverageRatingByBookId(bookId);
+        if (averageRating == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Book not found or no ratings available.");
+        }
+        return ResponseEntity.ok(averageRating);
     }
 }
