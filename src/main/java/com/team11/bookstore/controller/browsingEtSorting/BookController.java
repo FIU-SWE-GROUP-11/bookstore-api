@@ -3,6 +3,8 @@ package com.team11.bookstore.controller.browsingEtSorting;
 import com.team11.bookstore.model.M_Book;
 import com.team11.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +27,16 @@ public class BookController {
     }
 
     @GetMapping("/genre/{genre}")
-    public List<M_Book> findByGenre(@PathVariable String genre) {
-        return bookService.findByGenre(genre);
+    public ResponseEntity<?> findByGenre(@PathVariable String genre) {
+        List<M_Book> bookGenre = bookService.findByGenre(genre);
+
+        if (!bookGenre.isEmpty()) {
+            return ResponseEntity.ok(bookGenre);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No " + genre + " books found.");
+        }
     }
+
 
     @GetMapping("/top-sellers")
     public List<M_Book> findByCopiesSold(Integer copiesSold) {
@@ -35,22 +44,54 @@ public class BookController {
     }
 
     @GetMapping("/by-rating/{rating}")
-    public List<M_Book> findBooksByRating(@PathVariable Integer rating) {
-        return bookService.findBooksByRating(rating);
+    public ResponseEntity<?> findBooksByRating(@PathVariable Integer rating) {
+        List<M_Book> bookRating = bookService.findBooksByRating(rating);
+
+        if (!bookRating.isEmpty()) {
+            return ResponseEntity.ok(bookRating);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No books rated " + rating + " found.");
+        }
     }
 
     @PatchMapping("/apply-discount/{publisher}/{discountPercent}")
-    public void applyDiscountToBooksByPublisher(
+    public ResponseEntity<String> applyDiscountToBooksByPublisher(
             @PathVariable String publisher,
             @PathVariable BigDecimal discountPercent) {
-        bookService.applyDiscountToBooksByPublisher(publisher, discountPercent);
+
+        if (bookService.publisherExists(publisher)) {
+            bookService.applyDiscountToBooksByPublisher(publisher, discountPercent);
+            return ResponseEntity.ok("Discount applied to books under publisher \"" + publisher + "\".");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher \"" + publisher + "\" not found.");
+        }
     }
 
+
     @PatchMapping("/remove-discount/{publisher}/{discountPercent}")
-    public void removeDiscountFromBooksByPublisher(
+    public ResponseEntity<String> removeDiscountFromBooksByPublisher(
             @PathVariable String publisher,
             @PathVariable BigDecimal discountPercent) {
-        bookService.removeDiscountFromBooksByPublisher(publisher, discountPercent);
+
+        if (bookService.publisherExists(publisher)) {
+            bookService.removeDiscountFromBooksByPublisher(publisher, discountPercent);
+            return ResponseEntity.ok("Discount removed from books under publisher \"" + publisher + "\".");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher \"" + publisher + "\" not found.");
+        }
     }
-    // Other mappings for book browsing operations
+
+    @GetMapping("/details/{bookId}")
+    public ResponseEntity<?> getBookDetails(@PathVariable Integer bookId) {
+        if (!bookService.bookExists(bookId)) {
+            return new ResponseEntity<>("No book with ID " + bookId + " found.", HttpStatus.NOT_FOUND);
+        }
+
+        M_Book book = bookService.getBookDetails(bookId);
+        if (book != null) {
+            return ResponseEntity.ok(book);
+        } else {
+            return new ResponseEntity<>("Book details for ID " + bookId + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
 }

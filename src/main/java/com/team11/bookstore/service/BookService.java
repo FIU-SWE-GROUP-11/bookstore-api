@@ -47,6 +47,7 @@ public class BookService {
 
     public void applyDiscountToBooksByPublisher(String publisher, BigDecimal discountPercent) {
         List<M_Book> booksToDiscount = bookRepository.findByPublisher(publisher);
+
         for (M_Book book : booksToDiscount) {
             BigDecimal currentPrice = book.getPrice();
             BigDecimal discountAmount = currentPrice.multiply(discountPercent);
@@ -63,6 +64,7 @@ public class BookService {
 
     public void removeDiscountFromBooksByPublisher(String publisher, BigDecimal discountPercent) {
         List<M_Book> booksToDiscount = bookRepository.findByPublisher(publisher);
+
         for (M_Book book : booksToDiscount) {
             BigDecimal currentPrice = book.getPrice();
             BigDecimal originalPrice = currentPrice.divide(BigDecimal.ONE.subtract(discountPercent), 2, RoundingMode.HALF_UP);
@@ -70,6 +72,15 @@ public class BookService {
             bookRepository.save(book);
         }
     }
+
+    public boolean publisherExists(String publisher) {
+        return !bookRepository.findByPublisher(publisher).isEmpty();
+    }
+
+    public M_Book getBookDetails(Integer bookId) {
+        return bookRepository.findById(bookId).orElse(null);
+    }
+
 }
 
 
