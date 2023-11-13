@@ -7,7 +7,9 @@ import com.team11.bookstore.model.M_ShoppingCart;
 import com.team11.bookstore.model.M_User;
 import com.team11.bookstore.repository.BookRepository;
 import com.team11.bookstore.repository.UserRepository;
+import com.team11.bookstore.service.BookService;
 import com.team11.bookstore.service.ShoppingCartService;
+import com.team11.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +26,10 @@ public class ShoppingCartController {
     private ShoppingCartService cartService;
 
     @Autowired
-    private UserRepository userRepo;
+    private UserService userService;
 
     @Autowired
-    private BookRepository bookRepo; // TODO pending bookService update >> replace with BookService when update is complete
+    private BookService bookService;
 
     static class ShpCartBookObjectNotation {
         private Integer id;
@@ -75,14 +77,10 @@ public class ShoppingCartController {
 
 
         try {
-            Optional<M_User> user = userRepo.findById(uid);
-
-            if(user.isEmpty()){
-                throw new CustomExceptions.UserDoesNotExistException("Invalid user provided");
-            }
+            checkUserExists(uid);
 
 
-           cartItems  = cartService.getAllCartItemsByUserId(uid);
+            cartItems  = cartService.getAllCartItemsByUserId(uid);
 
             if (cartItems == null || cartItems.isEmpty()) {
                 throw new CustomExceptions.EmptyCartException("The cart for the provided user id is empty.");
@@ -91,15 +89,16 @@ public class ShoppingCartController {
             System.out.println(cartItems.size());
 
            for (M_CartItem item : cartItems ){
-               Optional<M_Book> book = bookRepo.findById(item.getBookID());  // TODO pending bookService update
+               Integer bookId = item.getBookID();
 
-               if(book.isPresent()){
+               boolean hasBook = bookService.bookExists(bookId);
 
-                   M_Book actualBook = book.get();
+               if(hasBook){
+                   M_Book book = bookService.getBookDetails(bookId);
 
-                   Integer id = actualBook.getBookID();
-                   String title = actualBook.getBookName();
-                   BigDecimal price = actualBook.getPrice();
+                   Integer id = book.getBookID();
+                   String title = book.getBookName();
+                   BigDecimal price = book.getPrice();
 
                    ShpCartBookObjectNotation newBook = new ShpCartBookObjectNotation(id, title, price);
 
@@ -120,6 +119,14 @@ public class ShoppingCartController {
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    private void checkUserExists(int uid) throws CustomExceptions.UserDoesNotExistException {
+        boolean userExists = userService.userExists(uid);
+
+        if(!userExists){
+            throw new CustomExceptions.UserDoesNotExistException("Invalid user provided");
+        }
     }
 
     public static class RequestCartItem{
@@ -156,11 +163,7 @@ public class ShoppingCartController {
 
 
         try {
-            Optional<M_User> user = userRepo.findById(uid);
-
-            if(user.isEmpty()){
-                throw new CustomExceptions.UserDoesNotExistException("Invalid user provided");
-            }
+            checkUserExists(uid);
 
 
             cartItems  = cartService.getAllCartItemsByUserId(uid);
@@ -171,13 +174,14 @@ public class ShoppingCartController {
 
 
             for (M_CartItem item : cartItems ){
-                Optional<M_Book> book = bookRepo.findById(item.getBookID());  // TODO pending bookService update
+                Integer bookId = item.getBookID();
 
-                if(book.isPresent()){
+                boolean hasBook = bookService.bookExists(bookId);
 
-                    M_Book actualBook = book.get();
+                if(hasBook){
+                    M_Book book = bookService.getBookDetails(bookId);
 
-                    BigDecimal price = actualBook.getPrice();
+                    BigDecimal price = book.getPrice();
 
                     subtotal = subtotal.add(price);
                 }else{
@@ -217,8 +221,6 @@ public class ShoppingCartController {
             return ResponseEntity.badRequest().body("User does not exist.");
         }
 
-        System.out.println(userShoppingCart.getCartID());
-        System.out.println("Book id: " + cartItem.getBookID());
 
         try{
             newItem = cartService.addBookToCart(userShoppingCart, cartItem.getBookID());
