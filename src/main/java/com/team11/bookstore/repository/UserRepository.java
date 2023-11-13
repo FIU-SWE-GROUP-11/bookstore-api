@@ -9,4 +9,7 @@ public interface UserRepository extends JpaRepository<M_User, Integer> {
     // Custom query methods
 
     M_User findByUsername(String username);
+    M_User findByUsernameIgnoreCase(String username);
+    boolean existsByUsername(String username);
+    boolean existsByUsernameIgnoreCase(String username);
 }

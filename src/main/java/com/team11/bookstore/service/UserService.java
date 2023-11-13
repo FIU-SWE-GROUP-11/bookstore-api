@@ -24,16 +24,26 @@ public class UserService {
         return userRepository.existsById(userId);
     }
 
-    public M_User getUser(String username) {
-        return userRepository.findByUsername(username);
+    public boolean userExistsByUsername(String username, boolean caseSensitive) {
+        if (caseSensitive) {
+            return userRepository.existsByUsername(username);
+        }
+        return userRepository.existsByUsernameIgnoreCase(username);
     }
 
-    public void saveUser(M_User newUser) {
-        userRepository.save(newUser);
+    public M_User getUser(String username, boolean caseSensitive) {
+        if (caseSensitive) {
+            return userRepository.findByUsername(username);
+        }
+        return userRepository.findByUsernameIgnoreCase(username);
     }
 
-    public void saveCreditCard(M_CreditCard newCreditCard) {
-        creditCardRepository.save(newCreditCard);
+    public void saveUser(M_User user) {
+        userRepository.save(user);
+    }
+
+    public void saveCreditCard(M_CreditCard creditCard) {
+        creditCardRepository.save(creditCard);
     }
 
 }
