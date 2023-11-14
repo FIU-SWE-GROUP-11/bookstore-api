@@ -14,4 +14,6 @@ public interface CartItemRepository extends JpaRepository<M_CartItem, Integer> {
 
     // checks if there is already a cart item with the given CartID and BookID
     boolean existsByShoppingCart_CartIDAndBookID(Integer cartID, Integer bookID);
+
+    void deleteByCartItemsID(Integer cid);
 }

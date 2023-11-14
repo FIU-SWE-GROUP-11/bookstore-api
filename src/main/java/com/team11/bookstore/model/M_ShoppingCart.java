@@ -18,7 +18,7 @@ public class M_ShoppingCart {
     @Column(name = "\"userID\"", nullable = false)
     private Integer userID;
 
-    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Set<M_CartItem> cartItems = new HashSet<>();;
 
     public M_ShoppingCart() {
