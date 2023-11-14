@@ -6,6 +6,11 @@ public class CustomExceptions{
             super(message);
         }
     }
+    public static class BookNotInCartException extends RuntimeException{
+        public BookNotInCartException(String message) {
+            super(message);
+        }
+    }
     public static class BookAlreadyInTheCartException extends Exception{
         public BookAlreadyInTheCartException(String message) {
             super(message);

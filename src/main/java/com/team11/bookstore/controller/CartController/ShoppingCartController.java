@@ -246,6 +246,50 @@ public class ShoppingCartController {
 
         return ResponseEntity.ok(newItem.getBookID());
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteCartItem(@RequestParam Integer uid, Integer bid){
+        if(uid == null && bid == null){
+            return ResponseEntity.badRequest().body("Please provide a user id and book id.");
+        }
+
+        if (uid==null){
+            return ResponseEntity.badRequest().body("Please provide a user id.");
+        }
+
+        if (bid==null){
+            return ResponseEntity.badRequest().body("Please provide a book id.");
+        }
+
+        try{
+            boolean userExists = userService.userExists(uid);
+            boolean bookExists = bookService.bookExists(bid);
+
+
+            if(!userExists){
+                throw new CustomExceptions.UserDoesNotExistException("User does not exist. user id  = " + uid);
+            }
+
+            if(!bookExists){
+                throw new CustomExceptions.InvalidBookIDException("Book does not exist. book id = " + bid);
+            }
+
+            cartService.deleteItemFromCart(uid, bid);
+
+            return  ResponseEntity.ok("item removed from the cart!");
+
+        }catch (CustomExceptions.UserDoesNotExistException | CustomExceptions.InvalidBookIDException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Something went wrong.");
+        }
+
+    }
+
+    @ExceptionHandler(CustomExceptions.BookNotInCartException.class)
+    public ResponseEntity<?> handleBookNotInCartException(CustomExceptions.BookNotInCartException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }
 
 
