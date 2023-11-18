@@ -2,6 +2,8 @@ package com.team11.bookstore.controller.ratingEtCommenting;
 
 import com.team11.bookstore.model.M_Ratings;
 import com.team11.bookstore.service.RatingService;
+import com.team11.bookstore.service.BookService;
+import com.team11.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,21 @@ public class RatingController {
 
     @Autowired
     private RatingService ratingService;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BookService bookService;
+
 
     @PostMapping("/rate")
     public ResponseEntity<String> createRating(@RequestBody M_Ratings rating) {
-        // Validate the rating value
+        if (!userService.userExists(rating.getUser().getId())) {
+            return new ResponseEntity<>("Invalid user ID.", HttpStatus.BAD_REQUEST);
+        }
+        if (!bookService.bookExists(rating.getBook().getBookID())) {
+            return new ResponseEntity<>("Invalid book ID.", HttpStatus.BAD_REQUEST);
+        }
         if (rating.getRatingValue() < 1 || rating.getRatingValue() > 5) {
             return new ResponseEntity<>("Invalid rating value.", HttpStatus.BAD_REQUEST);
         }
